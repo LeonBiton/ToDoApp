@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header id="header">
+        <h1>To Do App</h1>
+        <form id="taskForm" action="/newtodo" method="post">
+            <input type="text" id="taskName" class="toDoInput" placeholder="Enter Task Name" name="name">
+            <input type="text" id="taskDesc" class="toDoInput" placeholder="Enter Task" name="task">
+            <input type="submit" value="Submit">
+        </form>
+    </header>
+
+    <ul id="tasksList">
+        <%   for(let i = 0; i < todoList.length ; i++){ %>
+            <li>
+                <%=todoList[i].name%>
+                    <p>
+                        <%= todoList[i].task %>
+                    </p>
+            </li>
+            <% } %>
+
+    </ul>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

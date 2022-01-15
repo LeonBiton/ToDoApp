@@ -2,6 +2,15 @@
     box-sizing: border-box;
 }
 
+h1 {
+    color: #969270;
+    font-family: 'Trocchi', serif;
+    font-size: 45px;
+    font-weight: normal;
+    line-height: 48px;
+    margin: 0;
+}
+
 ul {
     margin: 0;
     padding: 0;
@@ -69,7 +78,8 @@ input {
 }
 
 input[type=submit] {
-    width: 10%;
+    display: flex;
+    width: 5%;
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;

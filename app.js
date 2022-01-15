@@ -1,51 +1,76 @@
-let myNodelist = document.getElementsByTagName("LI");
-for (let i = 0; i < myNodelist.length; i++) {
-    let span = document.createElement("SPAN");
-    let txt = document.createTextNode("\u00D7");
-    span.className = "close";
-    span.appendChild(txt);
-    myNodelist[i].appendChild(span);
-}
+const express = require('express');
+const app = express();
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-let close = document.getElementsByClassName("close");
-for (let i = 0; i < close.length; i++) {
-    close[i].onclick = function() {
-    let div = this.parentElement;
-    div.style.display = "none";
-  }
-}
+mongoose.connect('mongodb://localhost:27017/todo')
+    .then(() => {
+        console.log("Mongo Connection open!!");
+    })
+    .catch(err => {
+        console.log("Mongo Error !!", err);
+    })
 
-let list = document.querySelector('ul');
-list.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    ev.target.classList.toggle('checked');
-  }
-}, false);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-const form = document.querySelector('#taskForm');
-form.addEventListener('submit', addTask);
+app.use(bodyParser.urlencoded({ extended: true }));
 
-function addTask(e) {
-    e.preventDefault();
-    let li = document.createElement("li");
-    let p = document.createElement("p");
-    let inputVal = document.getElementById("taskName").value;
-    let taskVal = document.getElementById("taskDesc").value;
-    let t = document.createTextNode(inputVal);
-    let pText = document.createTextNode(taskVal);
-    p.appendChild(pText);
-    li.appendChild(t);
-    li.appendChild(p);
-    document.getElementById("tasksList").appendChild(li);
-    let span = document.createElement("SPAN");
-    let txt = document.createTextNode("\u00D7");
-    span.className = "close";
-    span.appendChild(txt);
-    li.appendChild(span);
-    for (let i = 0; i < close.length; i++) {
-        close[i].onclick = function () {
-            let div = this.parentElement;
-            div.style.display = "none";
-        }
+const todoSchema = new mongoose.Schema({
+    name: String,
+    task: String
+})
+
+const Todo = mongoose.model("Todo", todoSchema);
+
+/* class Todo {
+    constructor(name, task) {
+        this.name = name;
+        this.task = task;
     }
 }
+
+const task1 = new Todo("Learn", "learn javascript and nodejs");
+const task2 = new Todo("Wash car", "wash car with bucket");
+
+let todoList = [task1, task2]; */
+
+app.get('/', (req, res) => {
+    Todo.find({}, function(err, todoList) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("index.ejs", { todoList: todoList })
+        }
+    })
+})
+
+app.post("/newtodo", (req, res) => {
+    console.log("item Submitted!");
+    /* const name = req.body.name;
+    const desc = req.body.task;
+    const task = new Todo(name, desc);
+    todoList.push(task); */
+    const newTask = new Todo({
+        name: req.body.name,
+        task: req.body.task
+    })
+    Todo.create(newTask, function(err, Todo) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("Inserted", newTask);
+        }
+    })
+    res.redirect("/");
+})
+
+app.get('*', (req, res) => {
+    res.send("<h1>Invalid page</h1>");
+})
+
+
+app.listen(3000, () => {
+    console.log("App is listening port 3000");
+})
